@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Room</title>
+</head>
+<body>
+    <div id="chat">
+        <input type="text" id="username" placeholder="Enter your name"/>
+        <input type="text" id="room" placeholder="Enter room name"/>
+        <button onclick="joinRoom()">Join Room</button>
+        <button onclick="leaveRoom()">Leave Room</button>
+        <br>
+        <input type="text" id="message" placeholder="Enter message"/>
+        <button onclick="sendMessage()">Send Message</button>
+    </div>
+
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script type="text/javascript">
+        var socket = io();
+
+        function joinRoom() {
+            var username = document.getElementById('username').value;
+            var room = document.getElementById('room').value;
+            socket.emit('join', {username: username, room: room});
+        }
+
+        function leaveRoom() {
+            var username = document.getElementById('username').value;
+            var room = document.getElementById('room').value;
+            socket.emit('leave', {username: username, room: room});
+        }
+
+        function sendMessage() {
+            var message = document.getElementById('message').value;
+            var username = document.getElementById('username').value;
+            var room = document.getElementById('room').value;
+            socket.emit('message', {msg: message, username: username, room: room});
+        }
+
+        socket.on('status', function(data) {
+            console.log(data.msg);
+        });
+
+        socket.on('broadcast message', function(data) {
+            console.log(data.msg);
+        });
+    </script>
+</body>
+</html>

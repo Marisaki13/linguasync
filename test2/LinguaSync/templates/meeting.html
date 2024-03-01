@@ -1,0 +1,109 @@
+<html>
+
+<head>
+    <title>Meetings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .overlay-buttons {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000; /* Ensure buttons appear above other content */
+        }
+        
+        .overlay-buttons button {
+            margin: 5px;
+            padding: 10px 20px;
+            background-color: #007bff; /* Blue color, you can change this */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+    <div class="back-to-dashboard">
+        <a href="{{ url_for('dashboard') }}" style="text-decoration: none;">
+            <button>Back to Dashboard</button>
+        </a>
+    </div>
+
+    <!-- Overlay Buttons -->
+    <div class="overlay-buttons">
+        <button id="overlayButton1">Overlay Button 1</button>
+        <button onclick="sendMessage()">Send Message</button>
+        <button id="overlayButton2">Overlay Button 2</button>
+    </div>
+
+  
+</body>
+<script src="https://unpkg.com/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js"></script>
+<script>
+    window.onload = function () {
+        function getUrlParams(url) {
+            let urlStr = url.split('?')[1];
+            const urlSearchParams = new URLSearchParams(urlStr);
+            const result = Object.fromEntries(urlSearchParams.entries());
+            return result;
+        }
+
+
+
+        // Generate a Token by calling a method.
+        // @param 1: appID
+        // @param 2: serverSecret
+        // @param 3: Room ID
+        // @param 4: User ID
+        // @param 5: Username
+        const roomID = getUrlParams(window.location.href)['roomID'] || (Math.floor(Math.random() * 10000) + "");
+        const userID = Math.floor(Math.random() * 10000) + "";
+        const userName = "{{username}}";
+        const appID = 1854705241;
+        const serverSecret = "95bdc4b3bf114af7d130ea4ff8d171dd";
+        const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, roomID, userID, userName);
+
+        const zp = ZegoUIKitPrebuilt.create(kitToken);
+        zp.joinRoom({
+            container: document.querySelector("#root"),
+            sharedLinks: [{
+                name: 'Personal link',
+                url: window.location.protocol + '//' + window.location.host + window.location.pathname + '?roomID=' + roomID,
+            }],
+            scenario: {
+                mode: ZegoUIKitPrebuilt.VideoConference,
+            },
+
+            turnOnMicrophoneWhenJoining: true,
+            turnOnCameraWhenJoining: true,
+            showMyCameraToggleButton: true,
+            showMyMicrophoneToggleButton: true,
+            showAudioVideoSettingsButton: true,
+            showScreenSharingButton: true,
+            showTextChat: true,
+            showUserList: true,
+            maxUsers: 2,
+            layout: "Auto",
+            showLayoutButton: false,
+
+        });
+
+        // Code for overlay buttons
+        const overlayButton1 = document.getElementById('overlayButton1');
+        overlayButton1.addEventListener('click', function() {
+            // Handle click event for overlay button 1
+            // Add your functionality here
+        });
+
+        const overlayButton2 = document.getElementById('overlayButton2');
+        overlayButton2.addEventListener('click', function() {
+            // Handle click event for overlay button 2
+            // Add your functionality here
+        });
+    }
+</script>
+
+</html>

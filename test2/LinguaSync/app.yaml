@@ -1,0 +1,14 @@
+runtime: python39
+entrypoint: gunicorn -b :$PORT main:app
+
+env_variables:
+  SECRET_KEY: "my-secrets"
+  SQLALCHEMY_DATABASE_URI: "sqlite:///video-meeting.db"
+
+beta_settings:
+  # This setting allows the app to connect to an external database
+  cloud_sql_instances: linguasync:asia-southeast1:linguasync-sql
+  
+handlers:
+- url: /.*
+  script: auto

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat App</title>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', () => {
+            var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+            var room = "default";  // A default room
+
+            document.querySelector('#join').onclick = () => {
+                let newRoom = document.querySelector('#room').value;
+                if (newRoom != room) {
+                    socket.emit('leave_room', {'username': document.querySelector('#username').value, 'room': room});
+                    socket.emit('join_room', {'username': document.querySelector('#username').value, 'room': newRoom});
+                    room = newRoom;
+                }
+            };
+
+            socket.on('connect', () => {
+                socket.emit('join_room', {'username': document.querySelector('#username').value, 'room': room});
+            });
+
+            document.querySelector('#send').onclick = () => {
+                socket.emit('send_message', {
+                    'message': document.querySelector('#message').value,
+                    'username': document.querySelector('#username').value,
+                    'room': room
+                });
+            };
+
+            socket.on('announce_message', data => {
+                const p = document.createElement('p');
+                p.innerHTML = data.message;
+                document.querySelector('#messages').append(p);
+            });
+        });
+    </script>
+</head>
+<body>
+    Username: <input id="username" type="text"><br>
+    Room: <input id="room" type="text" value="default">
+    <button id="join">Join Room</button><br>
+    <input id="message" type="text">
+    <button id="send">Send</button>
+    <div id="messages"></div>
+</body>
+</html>
